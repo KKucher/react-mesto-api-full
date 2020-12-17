@@ -1,20 +1,61 @@
-require("dotenv-flow").config();
-const cors = require("cors");
 const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
-const cookieParser = require("cookie-parser");
-const { celebrate, Joi, errors } = require("celebrate");
-const { ERROR_CODE_404, errorMessage404, checkError } = require("./utils/errors");
-const { createUser, login, logout, checkCookies } = require("./controllers/users");
-const auth = require("./middlewares/auth");
-const { requestLogger, errorLogger } = require("./middlewares/logger");
+
+const cors = require("cors");
+require("dotenv").config();
 
 const cardsRouter = require("./routes/cards");
 const usersRouter = require("./routes/users");
+const { login, createUser } = require("./controllers/users.js");
+const auth = require("./middlewares/auth.js");
+const NotFoundError = require("./utils/NotFoundError");
+const { requestLogger, errorLogger } = require("./middlewares/logger");
+const { errors, celebrate, Joi } = require("celebrate");
 
-const { PORT = 3000 } = process.env;
+const { PORT = 3003 } = process.env;
 const app = express();
+
+const validateUser = celebrate({
+  body: Joi.object().keys({
+    email: Joi.string().required().email(),
+    password: Joi.string().required().min(8),
+  }),
+});
+
+app.use(cors());
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
+app.use(requestLogger);
+
+app.get("/crash-test", () => {
+  setTimeout(() => {
+    throw new Error("Сервер сейчас упадёт");
+  }, 0);
+});
+
+app.post("/signin", validateUser, login);
+app.post("/signup", createUser);
+
+app.use(auth);
+
+app.use("/cards", cardsRouter);
+app.use("/users", usersRouter);
+app.use("/*", (req, res) => {
+  throw new NotFoundError("Запрашиваемый ресурс не найден");
+});
+
+app.use(errorLogger);
+app.use(errors());
+
+app.use((err, req, res, next) => {
+  const { statusCode = 500, message } = err;
+  res.status(statusCode).send({
+    message: statusCode === 500 ? "На сервере произошла ошибка" : message,
+  });
+});
 
 mongoose.connect("mongodb://localhost:27017/mestodb", {
   useNewUrlParser: true,
@@ -23,43 +64,6 @@ mongoose.connect("mongodb://localhost:27017/mestodb", {
   useUnifiedTopology: true,
 });
 
-app.use(cors());
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(cookieParser());
-app.use(requestLogger);
-
-app.post('/signin', celebrate({
-  body: Joi.object().keys({
-    email: Joi.string().email().required(),
-    password: Joi.string().min(4).required().pattern(/^\S+$/),
-  }),
-}), login);
-
-app.post('/signup', celebrate({
-  body: Joi.object().keys({
-    email: Joi.string().email().required(),
-    password: Joi.string().min(4).required().pattern(/^\S+$/),
-  }).unknown(true),
-}), createUser);
-
-app.use(auth);
-
-app.get("/check", checkCookies);
-app.use("/users", usersRouter);
-app.use("/cards", cardsRouter);
-
-app.use("/logout", logout);
-
-app.use("/*", (req, res) => {
-  res.status(ERROR_CODE_404).send({ message: errorMessage404 });
-});
-
-app.use(errorLogger);
-app.use(errors());
-app.use((err, req, res, next) => checkError(err, res, next));
-
 app.listen(PORT, () => {
-  // Если всё работает, консоль покажет, какой порт приложение слушает
   console.log(`App listening on port ${PORT}`);
 });

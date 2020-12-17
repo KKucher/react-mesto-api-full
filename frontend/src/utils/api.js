@@ -1,4 +1,16 @@
-import { apiOptions, checkResponse } from "./utils";
+/* eslint-disable import/prefer-default-export */
+/* eslint-disable prefer-promise-reject-errors */
+/* eslint-disable no-underscore-dangle */
+
+import { apiOptions } from "./utils";
+
+
+const handleOriginalResponse = (res) => {
+  if (!res.ok) {
+    return Promise.reject(`Ошибка: ${res.status}`);
+  }
+  return res.json();
+};
 
 class Api {
   constructor(options) {
@@ -15,8 +27,9 @@ class Api {
       method: "GET",
       headers: {
         authorization: this._authorization,
+        "Content-type": `${this._contentType}`,
       },
-    }).then(checkResponse);
+    }).then(handleOriginalResponse);
   }
 
   //***************************************************************************
@@ -27,8 +40,9 @@ class Api {
       method: "GET",
       headers: {
         authorization: this._authorization,
+        "Content-type": `${this._contentType}`,
       },
-    }).then(checkResponse);
+    }).then(handleOriginalResponse);
   }
 
   //***************************************************************************
@@ -42,10 +56,10 @@ class Api {
         "Content-Type": this._contentType,
       },
       body: JSON.stringify({
-        name: name,
-        about: about,
+        name,
+        about,
       }),
-    }).then(checkResponse);
+    }).then(handleOriginalResponse);
   }
 
   //***************************************************************************
@@ -59,10 +73,10 @@ class Api {
         "Content-Type": this._contentType,
       },
       body: JSON.stringify({
-        name: name,
-        link: link,
+        name,
+        link,
       }),
-    }).then(checkResponse);
+    }).then(handleOriginalResponse);
   }
 
   //***************************************************************************
@@ -75,7 +89,7 @@ class Api {
         authorization: this._authorization,
         "Content-Type": this._contentType,
       },
-    }).then(checkResponse);
+    }).then(handleOriginalResponse);
   }
 
   //***************************************************************************
@@ -88,7 +102,7 @@ class Api {
         authorization: this._authorization,
         "Content-Type": this._contentType,
       },
-    }).then(checkResponse);
+    }).then(handleOriginalResponse);
   }
 
   //***************************************************************************
@@ -104,7 +118,7 @@ class Api {
       body: JSON.stringify({
         avatar: `${avatar}`,
       }),
-    }).then(checkResponse);
+    }).then(handleOriginalResponse);
   }
 }
 

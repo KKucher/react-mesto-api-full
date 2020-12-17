@@ -84,7 +84,7 @@ function App() {
         authApi
           .getContent(data.token)
           .then((res) => {
-            setUserData(res.data.email);
+            setUserData(res.email);
           })
           .catch((err) => {
             setDataInfoTool({ title: "Что-то пошло не так! Попробуйте ещё раз.", icon: failLogo });
@@ -155,7 +155,7 @@ function App() {
         .then((res) => {
           if (res) {
             setLoggedIn(true);
-            setUserData(res.data.email);
+            setUserData(res.email);
             history.push("/");
           } else {
             setDataInfoTool({ title: "Что-то пошло не так! Попробуйте ещё раз.", icon: failLogo });

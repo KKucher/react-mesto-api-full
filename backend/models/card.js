@@ -1,5 +1,7 @@
+/* eslint-disable no-useless-escape */
+
 const mongoose = require("mongoose");
-const isURL = require('validator/lib/isURL');
+const validator = require("validator");
 
 const cardSchema = new mongoose.Schema({
   name: {
@@ -12,8 +14,10 @@ const cardSchema = new mongoose.Schema({
     type: String,
     required: true,
     validate: {
-      validator: (v) => isURL(v),
-      message: "Некорректная ссылка!",
+      validator(v) {
+        return validator.isURL(v);
+      },
+      message: "This link is not valid!",
     },
   },
   owner: {
