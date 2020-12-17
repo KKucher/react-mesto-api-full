@@ -4,22 +4,22 @@ import { Link } from "react-router-dom";
 function Login({ handleLogin }) {
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
-  const [values, setValues] = React.useState({});
-
-  // function handleChange(evt) {
-  //   if (evt.target.name === "Email") {
-  //     setEmail(evt.target.value);
-  //   } else if (evt.target.name === "Password") {
-  //     setPassword(evt.target.value);
-  //   }
-  // }
+  // const [values, setValues] = React.useState({});
 
   function handleChange(evt) {
-    const target = evt.target;
-    const value = target.value;
-    const name = target.name;
-    setValues({...values, [name]: value });
+    if (evt.target.name === "Email") {
+      setEmail(evt.target.value);
+    } else if (evt.target.name === "Password") {
+      setPassword(evt.target.value);
+    }
   }
+
+  // function handleChange(evt) {
+  //   const target = evt.target;
+  //   const value = target.value;
+  //   const name = target.name;
+  //   setValues({...values, [name]: value });
+  // }
 
   function resetForm() {
     setEmail("");

@@ -6,7 +6,8 @@ export const apiOptions = {
   },
 };
 
-export const baseUrl = "https://auth.nomoreparties.co";
+// export const baseUrl = "https://auth.nomoreparties.co";
+export const baseUrl = `${window.location.protocol}${process.env.REACT_APP_API_URL || '//localhost:3001'}`;
 
 export const checkResponse = (res) =>
   res.ok ? res.json() : Promise.reject(`Ошибка: ${res.status}`);
