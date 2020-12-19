@@ -1,11 +1,12 @@
+/* eslint-disable consistent-return */
+/* eslint-disable comma-dangle */
+
 const jwt = require("jsonwebtoken");
 const UnauthError = require("../utils/UnauthError");
 
 const { NODE_ENV, JWT_SECRET } = process.env;
 
-const extractBearerToken = (header) => {
-  return header.replace("Bearer ", "");
-};
+const extractBearerToken = (header) => header.replace("Bearer ", "");
 
 module.exports = (req, res, next) => {
   const { authorization } = req.headers;

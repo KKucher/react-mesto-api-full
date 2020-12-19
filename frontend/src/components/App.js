@@ -76,28 +76,46 @@ function App() {
 
   // Обработчик событий (авторизация):
   //***************************************************************************
+  // function handleLogin(email, password) {
+  //   console.log(email, password);
+  //   authApi
+  //     .authorize(email, password)
+  //     .then((data) => {
+  //       authApi
+  //         .getContent(data.token)
+  //         .then((res) => {
+  //           setUserData(res.email);
+  //         })
+  //         .catch((err) => {
+  //           setDataInfoTool({ title: "Что-то пошло не так! Попробуйте ещё раз.", icon: failLogo });
+  //           console.error(err);
+  //           handleInfoTooltipOpen();
+  //         });
+
+  //       localStorage.setItem("token", data.token);
+  //       setLoggedIn(true);
+  //       history.push("/");
+  //     })
+  //     .catch((err) => {
+  //       setDataInfoTool({ title: "Что-то пошло не так! Попробуйте ещё раз.", icon: failLogo });
+  //       console.error(err);
+  //       handleInfoTooltipOpen();
+  //     });
+  // }
+
   function handleLogin(email, password) {
-    console.log(email, password);
     authApi
       .authorize(email, password)
       .then((data) => {
-        authApi
-          .getContent(data.token)
-          .then((res) => {
-            setUserData(res.email);
-          })
-          .catch((err) => {
-            setDataInfoTool({ title: "Что-то пошло не так! Попробуйте ещё раз.", icon: failLogo });
-            console.error(err);
-            handleInfoTooltipOpen();
-          });
-
         localStorage.setItem("token", data.token);
         setLoggedIn(true);
         history.push("/");
       })
       .catch((err) => {
-        setDataInfoTool({ title: "Что-то пошло не так! Попробуйте ещё раз.", icon: failLogo });
+        setDataInfoTool({
+          title: "Что-то пошло не так! Попробуйте ещё раз.",
+          icon: failLogo,
+        });
         console.error(err);
         handleInfoTooltipOpen();
       });
@@ -110,7 +128,7 @@ function App() {
       .register(email, password)
       .then((data) => {
         history.push("/sign-in");
-        console.log(data);
+        // console.log(data);
         setDataInfoTool({ title: "Вы успешно зарегистрировались!", icon: successLogo });
         handleInfoTooltipOpen();
       })
@@ -207,7 +225,7 @@ function App() {
   // Поставить/удалить лайк:
   //***************************************************************************
   function handleCardLike(card) {
-    const isLiked = card.likes.some((i) => i._id === currentUser._id);
+    const isLiked = card.likes.some((i) => i === currentUser._id);
     api
       .changeLikeDislikeStatus(card._id, !isLiked)
       .then((newCard) => {
@@ -238,7 +256,7 @@ function App() {
     api
       .addNewCard({ name, link })
       .then((newCard) => {
-        setCards([newCard, ...cards]);
+        setCards([...cards, newCard]);
         closeAllPopups();
       })
       .catch((err) => console.log(`Error ${err}`));
@@ -256,15 +274,28 @@ function App() {
   // Загрузка карточек и информации о пользователе с сервера:
   //***************************************************************************
   React.useEffect(() => {
-    const promises = [api.getUserInfo(), api.getInitialCards()];
+    if (loggedIn) {
+      const promises = [api.getUserInfo(), api.getInitialCards()];
 
-    Promise.all(promises)
+      Promise.all(promises)
       .then(([user, cards]) => {
         setCurrentUser(user);
         setCards(cards);
-      })
-      .catch((err) => console.log(`Error ${err}`));
-  }, []);
+        })
+        .catch((err) => console.log(`Error ${err}`));
+    }
+  }, [loggedIn]);
+
+  // React.useEffect(() => {
+  //   const promises = [api.getUserInfo(), api.getInitialCards()];
+
+  //   Promise.all(promises)
+  //     .then(([user, cards]) => {
+  //       setCurrentUser(user);
+  //       setCards(cards);
+  //     })
+  //     .catch((err) => console.log(`Error ${err}`));
+  // }, []);
 
   return (
     <CurrentUserContext.Provider value={currentUser}>

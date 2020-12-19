@@ -14,27 +14,27 @@ function Card({
   const currentUser = React.useContext(CurrentUserContext);
 
   const card = {
-    _id: _id,
-    link: link,
-    name: name,
-    owner: owner,
-    likes: likes,
+    _id,
+    link,
+    name,
+    owner,
+    likes,
   };
 
-  const isOwn = card.owner._id === currentUser._id;
+  const isOwn = card.owner === currentUser._id;
   const cardDeleteButtonClassName = `photo-grid__btn photo-grid__btn_action_del ${
     isOwn ? "" : "photo-grid__btn photo-grid__btn_action_del_hidden"
   }`;
 
-  const isLiked = card.likes.some((i) => i._id === currentUser._id);
+  const isLiked = card.likes.some((i) => i === currentUser._id);
   const cardLikeButtonClassName = `photo-grid__btn photo-grid__btn_action_like ${
     isLiked ? "photo-grid__btn photo-grid__btn_clicked" : ""
   }`;
 
   function handleClick() {
     onCardClick({
-      link: link,
-      name: name,
+      link,
+      name,
     });
   }
 
