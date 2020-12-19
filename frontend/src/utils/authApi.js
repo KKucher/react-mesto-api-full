@@ -1,7 +1,7 @@
 /* eslint-disable implicit-arrow-linebreak */
 /* eslint-disable prefer-promise-reject-errors */
 
-export const BASE_URL = "//localhost:3003";
+export const BASE_URL = "http://api.mesto.students.nomoreparties.xyz";
 
 const checkResponse = (res) =>
   res.ok ? res.json() : Promise.reject(`Ошибка: ${res.status}`);

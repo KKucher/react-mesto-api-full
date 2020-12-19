@@ -1,5 +1,6 @@
 export const apiOptions = {
-  baseUrl: "http://localhost:3003",
+  // baseUrl: "http://localhost:3003",
+  baseUrl: "http://api.mesto.students.nomoreparties.xyz",
   // baseUrl: "https://mesto.nomoreparties.co/v1/cohort-15",
   headers: {
     // authorization: `Bearer ${localStorage.getItem("token")}`,
