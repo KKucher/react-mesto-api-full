@@ -5,13 +5,13 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 require("dotenv").config();
 
+const { errors, celebrate, Joi } = require("celebrate");
 const cardsRouter = require("./routes/cards");
 const usersRouter = require("./routes/users");
 const { login, createUser } = require("./controllers/users.js");
 const auth = require("./middlewares/auth.js");
 const NotFoundError = require("./utils/NotFoundError");
 const { requestLogger, errorLogger } = require("./middlewares/logger");
-const { errors, celebrate, Joi } = require("celebrate");
 
 const { PORT = 3000 } = process.env;
 const app = express();
@@ -43,7 +43,7 @@ app.use(auth);
 
 app.use("/cards", cardsRouter);
 app.use("/users", usersRouter);
-app.use("/*", (req, res) => {
+app.use("/*", () => {
   throw new NotFoundError("Запрашиваемый ресурс не найден");
 });
 
@@ -55,9 +55,10 @@ app.use((err, req, res, next) => {
   res.status(statusCode).send({
     message: statusCode === 500 ? "На сервере произошла ошибка" : message,
   });
+  next();
 });
 
-mongoose.connect("mongodb://localhost:27017/mestodb", {
+mongoose.connect("mongodb://localhost:27017/mestodb2", {
   useNewUrlParser: true,
   useCreateIndex: true,
   useFindAndModify: false,

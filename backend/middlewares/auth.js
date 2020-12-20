@@ -1,6 +1,3 @@
-/* eslint-disable consistent-return */
-/* eslint-disable comma-dangle */
-
 const jwt = require("jsonwebtoken");
 const UnauthError = require("../utils/UnauthError");
 
@@ -20,7 +17,7 @@ module.exports = (req, res, next) => {
   try {
     payload = jwt.verify(
       token,
-      `${NODE_ENV === "production" ? JWT_SECRET : "dev-secret"}`
+      `${NODE_ENV === "production" ? JWT_SECRET : "dev-secret"}`,
     );
   } catch (err) {
     next(new UnauthError("Необходимо авторизироваться"));
@@ -28,5 +25,5 @@ module.exports = (req, res, next) => {
 
   req.user = payload;
 
-  next();
+  return next();
 };

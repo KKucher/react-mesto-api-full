@@ -1,7 +1,3 @@
-/* eslint-disable function-paren-newline */
-/* eslint-disable comma-dangle */
-/* eslint-disable implicit-arrow-linebreak */
-
 const Card = require("../models/card");
 
 const NotFoundError = require("../utils/NotFoundError");
@@ -32,7 +28,7 @@ module.exports.createCard = (req, res, next) => {
     .catch((err) => {
       if (err.name === "ValidationError") {
         next(
-          new BadRequestError("Ошибка валидации. Введены некорректные данные")
+          new BadRequestError("Ошибка валидации. Введены некорректные данные"),
         );
       }
       next(err);
@@ -44,7 +40,7 @@ module.exports.deleteCard = (req, res, next) => {
     .select("+owner")
     .orFail(() => {
       throw new NotFoundError(
-        "Карточки с таким id не существует, невозможно удалить!"
+        "Карточки с таким id не существует, невозможно удалить!",
       );
     })
     .then((card) => {
@@ -69,12 +65,12 @@ module.exports.likeCard = (req, res, next) => {
   Card.findByIdAndUpdate(
     req.params._id,
     { $addToSet: { likes: req.user._id } },
-    { new: true }
+    { new: true },
   )
     .then((card) => {
       if (!card) {
         throw new NotFoundError(
-          "Карточки с таким id не существует, невозможно проставить лайк"
+          "Карточки с таким id не существует, невозможно проставить лайк",
         );
       }
       res.send(card);
@@ -86,12 +82,12 @@ module.exports.dislikeCard = (req, res, next) => {
   Card.findByIdAndUpdate(
     req.params._id,
     { $pull: { likes: req.user._id } },
-    { new: true }
+    { new: true },
   )
     .then((card) => {
       if (!card) {
         throw new NotFoundError(
-          "Карточки с таким id не существует, невозможно забрать лайк"
+          "Карточки с таким id не существует, невозможно забрать лайк",
         );
       }
       res.send(card);

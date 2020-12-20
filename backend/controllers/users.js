@@ -1,10 +1,6 @@
-/* eslint-disable function-paren-newline */
-/* eslint-disable comma-dangle */
-/* eslint-disable implicit-arrow-linebreak */
-
-const User = require("../models/user");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const User = require("../models/user");
 
 const NotFoundError = require("../utils/NotFoundError");
 const BadRequestError = require("../utils/BadRequestError");
@@ -69,7 +65,13 @@ module.exports.createUser = (req, res, next) => {
     bcrypt
       .hash(password.toString(), 10)
       .then((hash) =>
-        User.create({ name, about, avatar, email, password: hash })
+        User.create({
+          name,
+          about,
+          avatar,
+          email,
+          password: hash,
+        })
       )
       .then((newUser) => {
         if (!newUser) {
@@ -85,14 +87,15 @@ module.exports.createUser = (req, res, next) => {
       })
       .catch((err) => {
         console.log(err);
-        if (err.name === "ValidationError") {
+        if (err.code === 11000) {
+          next(new UniqueError("Данный email уже зарегистрирован"));
+        } else if (err.name === "ValidationError") {
           next(
             new BadRequestError("Ошибка валидации. Введены некорректные данные")
           );
-        } else if (err.code === 11000) {
-          next(new UniqueError("Данный email уже зарегистрирован"));
+        } else {
+          next(err);
         }
-        next(err);
       });
   }
 };
