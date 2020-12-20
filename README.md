@@ -13,11 +13,11 @@
 
 **Ссылка на проект**
 
-http://kkucher92.students.nomoredomains.monster
+https://kkucher92.students.nomoredomains.monster
 
 **Ссылка на API**
 
-http://api.kkucher92.students.nomoredomains.monster
+https://api.kkucher92.students.nomoredomains.monster
 
 
 **Публичный IPv4**
