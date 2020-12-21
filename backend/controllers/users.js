@@ -56,23 +56,23 @@ module.exports.getUserById = (req, res, next) => {
 };
 
 module.exports.createUser = (req, res, next) => {
-  const { name, about, avatar, email, password } = req.body;
+  const {
+    name, about, avatar, email, password,
+  } = req.body;
   if (req.body.password.length < 8) {
     throw new BadRequestError(
-      "Ошибка валидации. Пароль должен состоять из 8 или более символов"
+      "Ошибка валидации. Пароль должен состоять из 8 или более символов",
     );
   } else {
     bcrypt
       .hash(password.toString(), 10)
-      .then((hash) =>
-        User.create({
-          name,
-          about,
-          avatar,
-          email,
-          password: hash,
-        })
-      )
+      .then((hash) => User.create({
+        name,
+        about,
+        avatar,
+        email,
+        password: hash,
+      }))
       .then((newUser) => {
         if (!newUser) {
           throw new NotFoundError("Неправильно переданы данные");
@@ -91,7 +91,7 @@ module.exports.createUser = (req, res, next) => {
           next(new UniqueError("Данный email уже зарегистрирован"));
         } else if (err.name === "ValidationError") {
           next(
-            new BadRequestError("Ошибка валидации. Введены некорректные данные")
+            new BadRequestError("Ошибка валидации. Введены некорректные данные"),
           );
         } else {
           next(err);
@@ -132,7 +132,7 @@ module.exports.login = (req, res, next) => {
       const token = jwt.sign(
         { _id: user._id },
         NODE_ENV === "production" ? JWT_SECRET : "dev-secret",
-        { expiresIn: "7d" }
+        { expiresIn: "7d" },
       );
       res.send({ token });
     })
